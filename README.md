@@ -5,7 +5,7 @@ For fast and accurate scanning and detecting use your local wifi ethernet and no
 
 <br>
 <br>
-![tool](https://user-images.githubusercontent.com/48758770/158574454-89bb7e3d-956f-498f-a8d1-35f2b763b5fd.png)
+![tool](https://user-images.githubusercontent.com/48758770/158574765-688962f3-0217-4489-be4e-830e339a4bce.png)
 # Usage
 Put your whole site list in ``sites.txt`` and then run ``python3 dtez.py``.<br><br>
 For fast and accurate scanning and detecting use your local wifi ethernet and not any proxy vpn connection as this will scan not accurate enough.
