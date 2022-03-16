@@ -20,3 +20,13 @@ This tool may be used subject to the following conditions.<br><br>
 - Do not copy and paste content<br>
 - Mention credits to the creator (Z3NTL3)<br>
 - Don't sell it<br>
+
+# Supported CMS'S
+```elixir
+CMS = {
+  1: 'WordPress',
+  2: 'XenForo',
+  3: 'MyBB'
+}
+# soon more algo's added for more detections of other well-known CMS types
+```
