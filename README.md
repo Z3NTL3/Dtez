@@ -1,7 +1,11 @@
 # Dtez
 Multi CMS Detector for a sites list.<br><br>
 
-For fast and accurate scanning and detecting use your local wifi ethernet and not any proxy vpn connection as this will scan not accurate enough.
+For fast and accurate scanning and detecting use your local wifi ethernet and not any proxy vpn connection as this will scan not accurate enough.<br>
+<a href="For fast and accurate scanning and detecting use your local wifi ethernet and not any proxy vpn connection as this will scan not accurate enough.">
+  Usage Instruction
+</a>
+  
 <br>
 ![tool](https://user-images.githubusercontent.com/48758770/158575167-b1f84d85-aa8e-4e98-8fbc-0e60b25984d9.png)
 
