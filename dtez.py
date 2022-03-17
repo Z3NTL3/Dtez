@@ -62,6 +62,7 @@ amount_sites = 0
 connection_errors = 0
 
 class MultiProcess():
+
     def __init__(self, *, obj):
         self.obj = multiprocessing.Process(target=obj)
         self.obj.daemon = True
@@ -72,10 +73,10 @@ class MultiProcess():
     def __exit__(self, type,value , traceback):
         self.obj.terminate()
 
-        if self.obj.is_alive():
-            return True
-        else:
+        if self.obj.is_alive():  
             return False
+        else:
+            return True
 
 def Loaded():
     with open('sites.txt','r')as f:
