@@ -71,12 +71,18 @@ class MultiProcess():
         return self.obj
 
     def __exit__(self, type,value , traceback):
-        self.obj.terminate()
+        kill = self.obj.kill()
+        terminate = self.obj.terminate()
+        
+        values = [kill,terminate]
+
+        random.choice(values)
 
         if self.obj.is_alive():  
-            return False
+            raise RuntimeError("Thread Could Not Be Exited Properly")
         else:
             return True
+
 
 def Loaded():
     with open('sites.txt','r')as f:
