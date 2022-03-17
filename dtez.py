@@ -5,6 +5,7 @@ from threading import Thread
 import random
 from time import strftime
 import datetime
+import multiprocessing
 # end basic libs
 
 # Run this script on your local internet wifi do not use vpn or proxies
@@ -60,6 +61,21 @@ undetected = 0
 amount_sites = 0
 connection_errors = 0
 
+class MultiProcess():
+    def __init__(self, *, obj):
+        self.obj = multiprocessing.Process(target=obj)
+        self.obj.daemon = True
+
+    def __enter__(self):
+        return self.obj
+
+    def __exit__(self, type,value , traceback):
+        self.obj.terminate()
+
+        if self.obj.is_alive():
+            return True
+        else:
+            return False
 
 def Loaded():
     with open('sites.txt','r')as f:
@@ -141,8 +157,6 @@ if __name__ == '__main__':
         sys.exit(f"\033[38;5;200m[\033[38;5;195mDATA\033[38;5;200m]\033[0m\n\t\033[31mMinimum 1 site to check in \033[32m\'sites.txt\'\033[0m\n")
     else:
         pass
-
-    th = Thread(target=urlget(urllist=URLS()))
-    th.daemon = True # making sure when tool exits thread also exit (0)
-    th.start()
-    th.join()
+    with MultiProcess(obj=urlget(urllist=URLS()))as pr:
+        pr.start()
+        pr.join()
