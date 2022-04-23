@@ -30,3 +30,5 @@ CMS = {
 }
 # soon more algo's added for more detections of other well-known CMS types
 ```
+# Info
+I know I have used Multi Processing wrong, will modify the source soon
