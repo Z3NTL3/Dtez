@@ -1,34 +1,18 @@
 # Importing basic libs
-import requests
+import httpx
 import sys
-from threading import Thread
 import random
 from time import strftime
 import datetime
-import multiprocessing
+from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import Future
+from concurrent.futures import as_completed
 # end basic libs
 
 # Run this script on your local internet wifi do not use vpn or proxies
 '''
 Programmed by Z3NTL3 (Efdal)
-z3ntl3.github.io
-
-README
-
-SUPPORTED CMS TYPES:
-Wordpress
-Xenforo
-MYBB
-
-This tool may be used subject to the following conditions.
-
-- Don't change anything in the source
-- Do not copy and paste content
-- Mention credits to the creator (Z3NTL3)
-- Don't sell it
 '''
-
-
 # Global and constant variables
 LOGO = """
      \033[38;5;198m·▄▄▄▄  ▄▄▄▄▄▄▄▄ .·▄▄▄▄•
@@ -61,29 +45,6 @@ undetected = 0
 amount_sites = 0
 connection_errors = 0
 
-class MultiProcess():
-
-    def __init__(self, *, obj):
-        self.obj = multiprocessing.Process(target=obj)
-        self.obj.daemon = True
-
-    def __enter__(self):
-        return self.obj
-
-    def __exit__(self, type,value , traceback):
-        kill = self.obj.kill()
-        terminate = self.obj.terminate()
-        
-        values = [kill,terminate]
-
-        random.choice(values)
-
-        if self.obj.is_alive():  
-            raise RuntimeError("Thread Could Not Be Exited Properly")
-        else:
-            return True
-
-
 def Loaded():
     with open('sites.txt','r')as f:
         data = f.read().strip(' ').split('\n')
@@ -108,62 +69,71 @@ def URLS():
 def log(sitename,cms):
     global detects
 
-    with open("cms-detect.txt",'a+')as f:
-        f.write(f'{CURRENT_TIME} URL: {sitename} |  CMS: {cms}{NEWLINE}')
-        detects += 1
+    if cms == CMS[1]:
+        with open("wordpress.txt",'a+')as f:
+            f.write(f'{CURRENT_TIME} URL: {sitename}')
+    elif cms == CMS[2]:
+        with open("xenforo.txt",'a+')as f:
+            f.write(f'{CURRENT_TIME} URL: {sitename}')
+    elif cms == CMS[3]:
+        with open("mybb.txt",'a+')as f:
+            f.write(f'{CURRENT_TIME} URL: {sitename}')
+    detects += 1
 
-def urlget(*,urllist):
-    print(f"\n\033[38;5;200m[\033[38;5;198mSYSTEM\033[38;5;200m] \033[0m{CURRENT_TIME}: {NEWLINE}Checking has been started for \033[38;5;200m{len(URLS())}\033[0m \033[34msites\033[0m\n")
-    print()
+def urlget(urllist):
     global undetected, amount_sites,connection_errors
-    begin = datetime.datetime.now()
+    urls = urllist
     
-    for urls in urllist:
-        try:
-            req = requests.get(urls, headers=HEADER, timeout=15)
-            res = req.content.decode('utf-8')
-            if req.status_code == 200:
-                if 'wp-content/themes' in res:
-                    # WordPress
-                    log(urls, CMS[1])
-                    print(f"\033[38;5;200m[\033[38;5;198mSYSTEM\033[38;5;200m] \033[0m{CURRENT_TIME}: {NEWLINE}Detected CMS: \033[32m\'\033[38;5;200mWordPress\033[32m\'\033[0m on \033[32m\'\033[38;5;200m{urls}\033[32m\'\033[0m")
-                    amount_sites += 1
+    try:
+        with httpx.Client(http2=True,headers=HEADER,timeout=15) as client:
+            req = client.get(urllist)
+            res = req.text
+        
+        if req.status_code >= 500 and req.status_code < 600 or req.status_code >= 400 and req.status_code <= 499:
+            print(f"\n\033[38;5;200m[\033[38;5;198mSYSTEM\033[38;5;200m] \033[0m{CURRENT_TIME}: {NEWLINE}Undetected CMS: '\033[38;5;200m{urls}\033[32m\' \033[31mConnection Error\033[0m")
+            undetected += 1
+        else:
+            if 'wp-content/themes' in res:
+                # WordPress
+                log(urllist, CMS[1])
+                print(f"\033[38;5;200m[\033[38;5;198mSYSTEM\033[38;5;200m] \033[0m{CURRENT_TIME}: {NEWLINE}Detected CMS: \033[32m\'\033[38;5;200mWordPress\033[32m\'\033[0m on \033[32m\'\033[38;5;200m{urls}\033[32m\'\033[0m")
+                amount_sites += 1
 
-                elif 'Xenforo' in res or 'XenForo' in res or 'xenforo' in res:
-                    # XenForo
-                    log(urls, CMS[2])
-                    print(f"\033[38;5;200m[\033[38;5;198mSYSTEM\033[38;5;200m] \033[0m{CURRENT_TIME}: {NEWLINE}Detected CMS: \033[32m\'\033[38;5;200mXenForo\033[32m\'\033[0m on \033[32m\'\033[38;5;200m{urls}\033[32m\'\033[0m")
-                    
-                    amount_sites += 1
-                elif 'MyBB' in res or 'mybb' in res or 'myBB' in res:
-                    # MyBB
-                    log(urls, CMS[3])
-                    print(f"\033[38;5;200m[\033[38;5;198mSYSTEM\033[38;5;200m] \033[0m{CURRENT_TIME}: {NEWLINE}Detected CMS: \033[32m\'\033[38;5;200mMyBB\033[32m\'\033[0m on \033[32m\'\033[38;5;200m{urls}\033[32m\'\033[0m")
-                    
-                    amount_sites += 1
-                
-                else:
-                    undetected += 1
+            elif 'Xenforo' in res or 'XenForo' in res or 'xenforo' in res:
+                # XenForo
+                log(urllist, CMS[2])
+                print(f"\n\033[38;5;200m[\033[38;5;198mSYSTEM\033[38;5;200m] \033[0m{CURRENT_TIME}: {NEWLINE}Detected CMS: \033[32m\'\033[38;5;200mXenForo\033[32m\'\033[0m on \033[32m\'\033[38;5;200m{urls}\033[32m\'\033[0m") 
+                amount_sites += 1
+            elif 'MyBB' in res or 'mybb' in res or 'myBB' in res:
+                # MyBB
+                log(urllist, CMS[3])
+                print(f"\n\033[38;5;200m[\033[38;5;198mSYSTEM\033[38;5;200m] \033[0m{CURRENT_TIME}: {NEWLINE}Detected CMS: \033[32m\'\033[38;5;200mMyBB\033[32m\'\033[0m on \033[32m\'\033[38;5;200m{urls}\033[32m\'\033[0m")
+                amount_sites += 1
+            
             else:
-                connection_errors += 1
-        except:
-            connection_errors += 1
-    
-    genomen_tijd = datetime.datetime.now() - begin
-    print()
-    print(f"\033[38;5;200m[\033[38;5;1mRESULTs\033[38;5;200m] \033[0m{CURRENT_TIME}:\nScanned \033[38;5;201m{Loaded()}\033[0m in \033[38;5;198m{genomen_tijd}\033[0m MS.") 
-    print()
-    print(f"\033[38;5;200m[\033[38;5;195mDATA\033[38;5;200m]\033[0m\n\t\033[38;5;195mAmount Sites Scanned: \033[38;5;200m{amount_sites}\n\t\033[38;5;195mDetections: \033[38;5;200m{detects}\n\t\033[38;5;195mUndetected: \033[38;5;200m{undetected}\n\t\033[38;5;195mConnection Errors: \033[38;5;200m{connection_errors}\n\t\033[38;5;195mSaved in: \033[32m\'\033[38;5;200mcms-detect.txt\033[32m\'\033[0m\n")   
+                print(f"\n\033[38;5;200m[\033[38;5;198mSYSTEM\033[38;5;200m] \033[0m{CURRENT_TIME}: {NEWLINE}Undetected CMS: '\033[38;5;200m{urls}\033[32m\'\033[0m")
+                undetected += 1
+      
+    except:
+        print(f"\n\033[38;5;200m[\033[38;5;198mSYSTEM\033[38;5;200m] \033[0m{CURRENT_TIME}: {NEWLINE}Undetected CMS: '\033[38;5;200m{urls}\033[32m\' \033[31mConnection Error\033[0m")
+        connection_errors += 1
     
 
-     
 
-if __name__ == '__main__':
+def Main():
     print(LOGO)
     if Loaded() < 1:
         sys.exit(f"\033[38;5;200m[\033[38;5;195mDATA\033[38;5;200m]\033[0m\n\t\033[31mMinimum 1 site to check in \033[32m\'sites.txt\'\033[0m\n")
     else:
         pass
-    with MultiProcess(obj=urlget(urllist=URLS()))as pr:
-        pr.start()
-        pr.join()
+    urls = URLS()
+    pool = ThreadPoolExecutor(max_workers=61)
+    print(f"\n\033[38;5;200m[\033[38;5;198mSYSTEM\033[38;5;200m] \033[0m{CURRENT_TIME}: {NEWLINE}Checking has been started for \033[38;5;200m{len(URLS())}\033[0m \033[34msites\033[0m\n")
+    futures = [pool.submit(urlget,url) for url in urls]
+
+    ftrs = []
+    for future in as_completed(futures):
+        ftrs.append(future)
+    
+if __name__ == '__main__':
+    Main()
