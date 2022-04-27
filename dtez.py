@@ -142,6 +142,7 @@ def Main():
             ths.append('yes')
     if len(ths) == len(ftrs):
         print(f"\n\033[38;5;200m[\033[38;5;198mSYSTEM\033[38;5;200m] \033[0m{CURRENT_TIME}: {NEWLINE}\033[32mThreads Terminated Because the process is completed\033[0m\n")
+    print(f"\n\033[38;5;200m[\033[38;5;198mDATA\033[38;5;200m] \033[0m{CURRENT_TIME}: {NEWLINE}\t\033[32mDetections\033[0m: {detects}{NEWLINE}\t\033[31mUndetected \033[38;5;200m[\033[38;5;198mNone XenForo,MyBB or WP Sites\033[38;5;200m]\033[0m: {undetected}{NEWLINE}\t\033[31mConnection Error\033[0m   : {connection_errors}")
     
 if __name__ == '__main__':
     Main()
