@@ -2,7 +2,7 @@
 Multi CMS Detector for a sites list.<br>
 
 Enhanced with concurrent and efficient threads.
-<a href="https://github.com/Z3NTL3/Dtez/">
+<a href="https://github.com/Z3NTL3/Dtez#usage">
   Usage Instruction
 </a>
   
@@ -11,6 +11,10 @@ Enhanced with concurrent and efficient threads.
 
 # Usage
 Put your whole site list in ```sites.txt``` and then run ```python3 dtez.py```.<br><br>
+```
+pip3 install httpx
+pip3 install httpx[http2]
+```
 
 # License
 This tool may be used for educational purposes only
