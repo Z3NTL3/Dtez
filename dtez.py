@@ -134,6 +134,11 @@ def Main():
     ftrs = []
     for future in as_completed(futures):
         ftrs.append(future)
-    
+    while True:
+        opt = input()
+        if opt.lower() == "exit":
+            for fr in ftrs:
+                fr.cancel()
+            pool.shutdown()
 if __name__ == '__main__':
     Main()
