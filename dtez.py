@@ -71,13 +71,13 @@ def log(sitename,cms):
 
     if cms == CMS[1]:
         with open("wordpress.txt",'a+')as f:
-            f.write(f'{CURRENT_TIME} URL: {sitename}')
+            f.write(f'{CURRENT_TIME} URL: {sitename}\n')
     elif cms == CMS[2]:
         with open("xenforo.txt",'a+')as f:
-            f.write(f'{CURRENT_TIME} URL: {sitename}')
+            f.write(f'{CURRENT_TIME} URL: {sitename}\n')
     elif cms == CMS[3]:
         with open("mybb.txt",'a+')as f:
-            f.write(f'{CURRENT_TIME} URL: {sitename}')
+            f.write(f'{CURRENT_TIME} URL: {sitename}\n')
     detects += 1
 
 def urlget(urllist):
