@@ -134,11 +134,14 @@ def Main():
     ftrs = []
     for future in as_completed(futures):
         ftrs.append(future)
-    while True:
-        opt = input()
-        if opt.lower() == "exit":
-            for fr in ftrs:
-                fr.cancel()
-            pool.shutdown()
+    pool.shutdown()
+
+    ths = []
+    for f in ftrs:
+        if f.done():
+            ths.append('yes')
+    if len(ths) == len(ftrs):
+        print(f"\n\033[38;5;200m[\033[38;5;198mSYSTEM\033[38;5;200m] \033[0m{CURRENT_TIME}: {NEWLINE}\033[32mThreads Terminated Because the process is completed\033[0m\n")
+    
 if __name__ == '__main__':
     Main()
