@@ -11,6 +11,7 @@ Enhanced with concurrent and efficient threads.
 
 # Usage
 Put your whole site list in ```sites.txt``` and then run ```python3 dtez.py```.<br><br>
+Required to install:
 ```
 pip3 install httpx
 pip3 install httpx[http2]
